@@ -45,6 +45,20 @@ services:
       MYSQL_ROOT_PASSWORD: rootpassword
     networks:
       - todo_net
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: todo_task_ngrok
+    restart: unless-stopped
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    command:
+      - "http"
+      - "app:80"
+    ports:
+      - "4040:4040"
+    networks:
+      - todo_net
   
 # saray networks ko aek alehda ya isolated network main link kr diya
 networks:

@@ -24,3 +24,6 @@ Thumbs.db
 .env.*
 /src/.env
 /src/.env.*
+
+.env
+.env.local
