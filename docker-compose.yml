@@ -1,0 +1,61 @@
+services:
+  # Container 1: Web Application (Laravel + Apache)
+  app:
+    build:
+      context: . # Current folder me Dockerfile dhoondo
+      dockerfile: Dockerfile
+    container_name: todo_task_app
+    restart: unless-stopped
+    ports:
+      - "8000:80" # Host Port 8000 -> Container Port 80
+    dns:          # Fast Google DNS taake network timeout na ho
+      - 8.8.8.8
+      - 1.1.1.1
+    volumes:
+      - ./src:/var/www/html # LIVE SYNC: Host ka ./src = Container ka /var/www/html
+    networks:
+      - todo_net
+  
+  #container 2 : db mysql k liay 
+  db:
+    image: mysql:latest # Standard MySQL image direct Docker Hub se
+    container_name: todo_task_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: todo_task_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: todo_task_user
+      MYSQL_PASSWORD: userpassword
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - todo_net
+  
+  # container 3: database gui phpmyadminn
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: todo_task_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8888:80"
+    environment:
+      PMA_HOST: db # MySQL container ka naam 'db' hai
+      MYSQL_ROOT_PASSWORD: rootpassword
+    networks:
+      - todo_net
+  
+# saray networks ko aek alehda ya isolated network main link kr diya
+networks:
+  todo_net:
+    driver: bridge
+
+#har drive pr database ka data save rahay ga
+volumes:
+  dbdata:
+    driver: local
+
+
+
+
